@@ -4,6 +4,13 @@
 
 [日本語](README.ja.md)
 
+> [!IMPORTANT]
+> **🎯 100 Stars Goal**
+>
+> Once this repository reaches 100 stars, we'll develop iOS/Android widgets! Check your streak status and remaining freeze tickets right from your home screen.
+>
+> If you're interested, please give us a ⭐!
+
 Freeze repository for the Always Green service.
 
 ## About This Repository
@@ -32,12 +39,6 @@ logs/
 ```
 
 Each file records the usernames of those who used a freeze on that day.
-
-## Future Plans
-
-Once this repository reaches 100 stars, we plan to develop iOS/Android widgets. You'll be able to check your streak status and remaining freeze tickets right from your home screen.
-
-If you're interested, please give us a star!
 
 ## Links
 
