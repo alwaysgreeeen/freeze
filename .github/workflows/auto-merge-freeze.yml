@@ -1,0 +1,69 @@
+name: Auto Merge Freeze PRs
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: startsWith(github.head_ref, 'freeze/')
+
+    steps:
+      - name: Verify PR author and merge status
+        id: verify
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Checking PR #$PR_NUMBER..."
+
+          PR_INFO=$(gh pr view "$PR_NUMBER" --repo "$REPO" \
+            --json author,mergeable,headRefName)
+
+          AUTHOR=$(echo "$PR_INFO" | jq -r '.author.login')
+          MERGEABLE=$(echo "$PR_INFO" | jq -r '.mergeable')
+          BRANCH=$(echo "$PR_INFO" | jq -r '.headRefName')
+
+          echo "Author: $AUTHOR"
+          echo "Mergeable: $MERGEABLE"
+          echo "Branch: $BRANCH"
+
+          if [[ "$AUTHOR" != "app/always-green-freeze-bot" ]]; then
+            echo "::error::PR author ($AUTHOR) is not the freeze bot"
+            exit 1
+          fi
+
+          if [[ ! "$BRANCH" =~ ^freeze/ ]]; then
+            echo "::error::Branch name ($BRANCH) does not start with freeze/"
+            exit 1
+          fi
+
+          if [[ "$MERGEABLE" != "MERGEABLE" ]]; then
+            echo "::error::PR is not mergeable (status: $MERGEABLE)"
+            exit 1
+          fi
+
+          echo "All checks passed!"
+          echo "verified=true" >> $GITHUB_OUTPUT
+
+      - name: Merge PR
+        if: steps.verify.outputs.verified == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Merging PR #$PR_NUMBER..."
+          gh pr merge "$PR_NUMBER" \
+            --repo "$REPO" \
+            --merge \
+            --delete-branch
+          echo "PR merged successfully!"
