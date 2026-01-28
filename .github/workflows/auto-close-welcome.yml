@@ -21,7 +21,8 @@ jobs:
           AUTHOR: ${{ github.event.issue.user.login }}
           TITLE: ${{ github.event.issue.title }}
         run: |
-          if [[ "$TITLE" == "🌱 Join: " ]]; then
+          # タイトルに既にユーザー名が含まれていなければ追加
+          if [[ "$TITLE" != *"$AUTHOR"* ]]; then
             gh issue edit "$ISSUE_NUMBER" --repo "$REPO" --title "🌱 Join: $AUTHOR"
           fi
 
