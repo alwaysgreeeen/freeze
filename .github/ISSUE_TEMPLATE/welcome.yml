@@ -1,6 +1,6 @@
 name: "🌱 Welcome - Join Always Green"
-description: "Always Green への参加を表明します"
-title: "🌱 Join: "
+description: "Join Always Green"
+title: "🌱 Join: <your-name>"
 labels: ["welcome"]
 body:
   - type: markdown
@@ -8,12 +8,12 @@ body:
       value: |
         ## Welcome to Always Green! 🌱
 
-        このIssueを作成すると、参加表明が完了します。
+        Submit this issue to join!
 
   - type: checkboxes
     id: acknowledgment
     attributes:
-      label: "参加表明"
+      label: "Join"
       options:
         - label: "Joined Always Green!"
           required: true
